@@ -1,0 +1,45 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: {{ include "build-pipeline.fullname" . }}
+  labels:
+    {{- include "build-pipeline.labels" . | nindent 4 }}
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: main-branch-listener
+      interceptors:
+        - ref:
+            name: "github"
+          params:
+            - name: "eventTypes"
+              value: ["push"]
+        - ref:
+            name: "cel"
+          params:
+            - name: "filter"
+              value: body.ref == 'refs/heads/main'
+      bindings:
+        - ref: {{ include "build-pipeline.fullname" . }}-main-bindings
+      template:
+        ref: {{ include "build-pipeline.fullname" . }}-main-template
+
+    - name: pull-requests-listener
+      interceptors:
+        - ref:
+            name: "github"
+          params:
+            - name: "eventTypes"
+              value: ["pull_request"]
+        - name: "only when PRs are opened"
+          ref:
+            name: "cel"
+          params:
+            - name: "filter"
+              value: "body.action in ['opened', 'synchronize', 'reopened']"
+      bindings:
+        - ref: {{ include "build-pipeline.fullname" . }}-pr-bindings
+      template:
+        ref: {{ include "build-pipeline.fullname" . }}-pr-template
+

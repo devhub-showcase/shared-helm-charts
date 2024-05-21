@@ -1,0 +1,53 @@
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: {{ include "build-pipeline.fullname" . }}-pr-template
+spec:
+  params:
+    - name: git-revision
+      description: The git revision
+    - name: git-repo-url
+      description: The application's repo url 
+    - name: git-repo-full-name
+      description: repository name
+    - name: head-sha
+      description: reference of the image that will get created
+    - name: pr-number
+      description: pull request number
+
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        name: $(uid)
+        labels:
+          backstage.io/kubernetes-id: $(tt.params.git-repo-full-name)
+      spec:
+        params:
+          - name: source-repo
+            value: $(tt.params.git-repo-url)
+          - name: source-branch
+            value: $(tt.params.git-revision)
+          - name: app-name
+            value: $(tt.params.git-repo-full-name)
+          - name: head-sha
+            value: $(tt.params.head-sha)
+          
+        pipelineRef:
+          name: {{ include "build-pipeline.fullname" . }}-pr-pipeline
+        serviceAccountName: pipeline
+        workspaces:
+          - name: source-shared-data
+            persistentVolumeClaim:
+              claimName: source-shared-data
+          - name: maven-settings 
+            emptyDir: {} 
+          - name: output-shared-data
+            persistentVolumeClaim:
+              claimName: output-shared-data
+          
+          
+         
+
+          

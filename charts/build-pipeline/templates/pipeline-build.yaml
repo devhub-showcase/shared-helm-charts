@@ -1,0 +1,84 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: {{ include "build-pipeline.fullname" . }}-pr-pipeline
+  labels:
+    type: pipeline
+    {{- include "build-pipeline.labels" . | nindent 4 }}
+spec:
+  params:
+    - name: source-repo
+      type: string
+      description: source repo that contains the application code
+    - name: source-branch
+      type: string
+      description: branch to build from in the source repo
+    - name: namespace
+      type: string
+      description: where the tekton project is installed
+      default: {{ .Values.build.namespace }}
+    - name: app-name
+      type: string
+      description: name of the application
+    - name: head-sha
+      type: string
+      description: head sha of the branch
+
+  workspaces:
+    - name: source-shared-data
+    - name: maven-settings
+    - name: docker-config
+    - name: output-shared-data
+    - name: git-config
+
+  tasks:
+    - name: git-clone-source    # fetch the app's repository
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.source-repo)
+        - name: revision
+          value: $(params.source-branch)
+      workspaces:
+        - name: output
+          workspace: source-shared-data
+    
+    - name: package             # run unit tests and compile the app's source code
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      runAfter:
+        - git-clone-source
+      params:
+        - name: GOALS  
+          value:
+            - test      
+            - package   
+      workspaces:
+        - name: source
+          workspace: source-shared-data
+        - name: maven-settings
+          workspace: maven-settings
+    
+    - name: build-and-push-image  # build the (compiled) source code and push the image to registry
+      taskRef:
+        kind: Task
+        name: buildah-update
+      runAfter:
+        - package
+      params:
+        - name: IMAGE
+          value: $(params.app-name)
+        - name: TAG
+          value: $(params.head-sha)
+        - name: EXTRA_ARGS
+          value:
+            - --skip-tls-verify
+      workspaces:
+        - name: source
+          workspace: source-shared-data
+        - name: dockerconfig 
+          workspace: docker-config
