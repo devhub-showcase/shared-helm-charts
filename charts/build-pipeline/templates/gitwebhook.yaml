@@ -1,0 +1,18 @@
+{{ $repo := split "/" .Values.git.repo }}
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: GitWebhook
+metadata:
+  name: gitwebhook-{{ include "build-pipeline.fullname" . }}
+spec:
+  gitHub:
+    gitServerCredentials:
+      name: github-pat
+  repositoryOwner: {{ $repo._3 }}
+  ownerType: user
+  repositoryName: {{ $repo._4 | replace ".git" "" }}
+  webhookURL: https://{{ include "build-pipeline.fullname" . }}-{{.Release.Name}}.apps.dev-acm.v3socp.boo
+  webhookSecret:
+    name: webhook-secret
+  events:
+    - push
+  active: true
