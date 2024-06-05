@@ -3,6 +3,7 @@ apiVersion: redhatcop.redhat.io/v1alpha1
 kind: GitWebhook
 metadata:
   name: gitwebhook-{{ include "build-pipeline.fullname" . }}
+  namespace: gitwebhook-operator
 spec:
   gitHub:
     gitServerCredentials:
