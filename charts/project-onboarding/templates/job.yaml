@@ -3,10 +3,9 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: create-pipeline-local-user
-  namespace: team-a-gitops
+  namespace: {{ $values.namespace }}
   labels:
     {{- $releaseLabels | nindent 4 }}
-    {{ $values.team }}-gitops: {{$key}}
   annotations:
     "helm.sh/hook": post-install
     "helm.sh/hook-weight": "-5"
@@ -23,15 +22,15 @@ spec:
               export HOME=/home/argocd
 
               echo "Getting argocd admin credential..."
-              if kubectl get secret team-a-gitops-cluster >/dev/null;
+              if kubectl get secret {{.Values.team}}-gitops-cluster >/dev/null;
               then
                 # Retrieve password
-                PASSWORD=$(oc get secret team-a-gitops-cluster -o jsonpath="{.data.admin\.password}" | base64 -d)
-                if kubectl get secret team-a-gitops-cluster >/dev/null;
+                PASSWORD=$(oc get secret {{.Values.team}}-gitops-cluster -o jsonpath="{.data.admin\.password}" | base64 -d)
+                if kubectl get secret {{.Values.team}}-gitops-cluster >/dev/null;
                 then
                   DEV_HUB_PASSWORD=$(oc get secret developer-hub-user -o jsonpath="{.data.password}" | base64 -d)
                   echo "Login to argocd server"
-                  argocd login --plaintext --username admin --password ${PASSWORD}  team-a-gitops-server
+                  argocd login --plaintext --username admin --password ${PASSWORD}  {{.Values.team}}-gitops-server
                   argocd account list
                   echo "Updating developer-hub user password"
                   argocd account update-password \
@@ -48,8 +47,8 @@ spec:
               fi
           imagePullPolicy: Always
           name: create-pipeline-local-user
-      serviceAccount: team-a-gitops-argocd-application-controller
-      serviceAccountName: team-a-gitops-argocd-application-controller
+      serviceAccount: {{.Values.team}}-gitops-argocd-application-controller
+      serviceAccountName: {{.Values.team}}-gitops-argocd-application-controller
       dnsPolicy: ClusterFirst
       restartPolicy: OnFailure
       terminationGracePeriodSeconds: 30
