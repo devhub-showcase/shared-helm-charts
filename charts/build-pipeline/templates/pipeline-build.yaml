@@ -30,7 +30,6 @@ spec:
     - name: maven-settings
     - name: docker-config
     - name: output-shared-data
-    - name: git-config
 
   tasks:
     - name: git-clone-source    # fetch the app's repository
