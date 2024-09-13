@@ -48,4 +48,4 @@ spec:
               claimName: output-shared-data
           - name: dockerconfig
             secret:
-              secretName: rhdh-pull-secret
+              secretName: dockerconfig
