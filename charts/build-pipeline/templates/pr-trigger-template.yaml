@@ -48,4 +48,4 @@ spec:
               claimName: output-shared-data
           - name: docker-config
             secret:
-              secretName: dockerconfig
+              secretName: docker-registry-config

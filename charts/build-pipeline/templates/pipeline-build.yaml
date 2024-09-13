@@ -70,7 +70,7 @@ spec:
         - package
       params:
         - name: IMAGE
-          value: quay.io/rhn_gps_vpogu/$(params.app-name)
+          value: docker.io/vikaspogu/$(params.app-name)
         - name: TAG
           value: $(params.head-sha)
         - name: EXTRA_ARGS
