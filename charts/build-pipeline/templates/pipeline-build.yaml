@@ -70,7 +70,7 @@ spec:
         - package
       params:
         - name: IMAGE
-          value: $(params.app-name)
+          value: quay.io/rhn_gps_vpogu/$(params.app-name)
         - name: TAG
           value: $(params.head-sha)
         - name: EXTRA_ARGS
