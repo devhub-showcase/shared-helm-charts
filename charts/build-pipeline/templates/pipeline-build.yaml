@@ -65,7 +65,7 @@ spec:
     - name: build-and-push-image  # build the (compiled) source code and push the image to registry
       taskRef:
         kind: ClusterTask
-        name: buildah-update
+        name: buildah
       runAfter:
         - package
       params:
