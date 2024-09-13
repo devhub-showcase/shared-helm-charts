@@ -34,6 +34,8 @@ spec:
             value: $(tt.params.git-repo-name)
           - name: head-sha
             value: $(tt.params.head-sha)
+          - name: registry
+            value: quay.io/rhn_gps_vpogu
         pipelineRef:
           name: {{ .Chart.Name }}-pr
         serviceAccountName: pipeline
