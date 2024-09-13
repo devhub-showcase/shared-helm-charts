@@ -44,7 +44,6 @@ spec:
       workspaces:
         - name: output
           workspace: source-shared-data
-    
     - name: package             # run unit tests and compile the app's source code
       taskRef:
         kind: ClusterTask
@@ -53,19 +52,17 @@ spec:
         - git-clone-source
       params:
         - name: GOALS  
-          value:
-            - test      
+          value:    
             - package   
       workspaces:
         - name: source
           workspace: source-shared-data
         - name: maven-settings
           workspace: maven-settings
-    
-    - name: build-and-push-image  # build the (compiled) source code and push the image to registry
+    - name: build-and-push-image
       taskRef:
         kind: ClusterTask
-        name: buildah-update
+        name: buildah-1-15-0
       runAfter:
         - package
       params:
@@ -73,9 +70,6 @@ spec:
           value: docker.io/vikaspogu/$(params.app-name)
         - name: TAG
           value: $(params.head-sha)
-        - name: EXTRA_ARGS
-          value:
-            - --skip-tls-verify
       workspaces:
         - name: source
           workspace: source-shared-data
