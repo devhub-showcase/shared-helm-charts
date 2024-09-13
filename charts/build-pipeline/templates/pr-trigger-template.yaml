@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: {{ include "build-pipeline.fullname" . }}-pr-template
+  name: {{ include "build-pipeline.fullname" . }}-pr
 spec:
   params:
     - name: git-revision
@@ -15,8 +15,7 @@ spec:
       description: reference of the image that will get created
     - name: pr-number
       description: pull request number
-
-  resourcetemplates:
+  resourceTemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
@@ -33,9 +32,8 @@ spec:
             value: $(tt.params.git-repo-full-name)
           - name: head-sha
             value: $(tt.params.head-sha)
-          
         pipelineRef:
-          name: {{ include "build-pipeline.fullname" . }}-pr-pipeline
+          name: {{ include "build-pipeline.fullname" . }}-pr
         serviceAccountName: pipeline
         workspaces:
           - name: source-shared-data
@@ -46,8 +44,6 @@ spec:
           - name: output-shared-data
             persistentVolumeClaim:
               claimName: output-shared-data
-          
-          
-         
-
-          
+          - name: dockerconfig
+            secret:
+              secretName: rhdh-pull-secret

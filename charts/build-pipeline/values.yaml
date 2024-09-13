@@ -1,6 +1,7 @@
 build:
-  namespace: acasas
+  namespace: ""
 
 git:
+  webhookEnabled: false
   branch: main
   repo: https://github.com/idp-team/my-quarkus-app.git 

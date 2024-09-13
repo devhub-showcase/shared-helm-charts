@@ -21,9 +21,9 @@ spec:
             - name: "filter"
               value: body.ref == 'refs/heads/main'
       bindings:
-        - ref: {{ include "build-pipeline.fullname" . }}-main-bindings
+        - ref: {{ include "build-pipeline.fullname" . }}-main
       template:
-        ref: {{ include "build-pipeline.fullname" . }}-main-template
+        ref: {{ include "build-pipeline.fullname" . }}-main
 
     - name: pull-requests-listener
       interceptors:
@@ -39,7 +39,7 @@ spec:
             - name: "filter"
               value: "body.action in ['opened', 'synchronize', 'reopened']"
       bindings:
-        - ref: {{ include "build-pipeline.fullname" . }}-pr-bindings
+        - ref: {{ include "build-pipeline.fullname" . }}-pr
       template:
-        ref: {{ include "build-pipeline.fullname" . }}-pr-template
+        ref: {{ include "build-pipeline.fullname" . }}-pr
 

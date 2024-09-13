@@ -1,4 +1,6 @@
+{{- if .Values.git.webhookEnabled }}
 {{ $repo := split "/" .Values.git.repo }}
+---
 apiVersion: redhatcop.redhat.io/v1alpha1
 kind: GitWebhook
 metadata:
@@ -16,3 +18,4 @@ spec:
   events:
     - push
   active: true
+{{- end }}
