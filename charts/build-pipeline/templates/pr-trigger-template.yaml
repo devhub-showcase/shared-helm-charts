@@ -46,6 +46,6 @@ spec:
           - name: output-shared-data
             persistentVolumeClaim:
               claimName: output-shared-data
-          - name: dockerconfig
+          - name: docker-config
             secret:
               secretName: dockerconfig
