@@ -21,7 +21,7 @@ spec:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        generateName: gh-pr-pipeline-
+        generateName: {{ include "build-pipeline.fullname" . }}-
         labels:
           backstage.io/kubernetes-id: $(tt.params.git-repo-name)
       spec:
