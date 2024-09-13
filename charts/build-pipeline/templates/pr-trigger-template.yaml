@@ -50,4 +50,4 @@ spec:
               claimName: output-shared-data
           - name: docker-config
             secret:
-              secretName: docker-registry-config
+              secretName: quay-registry-config
