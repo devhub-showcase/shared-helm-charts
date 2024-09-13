@@ -65,14 +65,12 @@ spec:
     - name: build-and-push-image  # build the (compiled) source code and push the image to registry
       taskRef:
         kind: ClusterTask
-        name: buildah-update
+        name: kaniko
       runAfter:
         - package
       params:
         - name: IMAGE
           value: docker.io/vikaspogu/$(params.app-name)
-        - name: TAG
-          value: $(params.head-sha)
         - name: EXTRA_ARGS
           value:
             - --skip-tls-verify
