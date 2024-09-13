@@ -10,7 +10,7 @@ metadata:
 spec:
   to:
     kind: Service
-    name: {{ include "build-pipeline.fullname" . }}
+    name: el-{{ include "build-pipeline.fullname" . }}
     weight: 100
   port:
     targetPort: http-listener
