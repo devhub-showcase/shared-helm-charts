@@ -70,7 +70,9 @@ spec:
         - package
       params:
         - name: IMAGE
-          value: docker.io/vikaspogu/$(params.app-name):$(params.head-sha)
+          value: docker.io/vikaspogu/$(params.app-name)
+        - name: TAG
+          value: $(params.head-sha)
         - name: EXTRA_ARGS
           value:
             - --skip-tls-verify
