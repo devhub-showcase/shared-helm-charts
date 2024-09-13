@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
-  name: {{ include "build-pipeline.fullname" . }}-pr
+  name: {{ .Chart.Name }}-pr
 spec:
   params:
     - name: git-revision
@@ -21,7 +21,7 @@ spec:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        generateName: {{ include "build-pipeline.fullname" . }}-
+        generateName: {{ .Chart.Name }}-
         labels:
           backstage.io/kubernetes-id: $(tt.params.git-repo-name)
       spec:
@@ -35,7 +35,7 @@ spec:
           - name: head-sha
             value: $(tt.params.head-sha)
         pipelineRef:
-          name: {{ include "build-pipeline.fullname" . }}-pr
+          name: {{ .Chart.Name }}-pr
         serviceAccountName: pipeline
         workspaces:
           - name: source-shared-data

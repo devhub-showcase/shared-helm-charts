@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
-  name: {{ include "build-pipeline.fullname" . }}
+  name: {{ .Chart.Name }}
   labels:
     {{- include "build-pipeline.labels" . | nindent 4 }}
 spec:
@@ -21,9 +21,9 @@ spec:
             - name: "filter"
               value: body.ref == 'refs/heads/main'
       bindings:
-        - ref: {{ include "build-pipeline.fullname" . }}-main
+        - ref: {{ .Chart.Name }}-main
       template:
-        ref: {{ include "build-pipeline.fullname" . }}-main
+        ref: {{ .Chart.Name }}-main
 
     - name: pull-requests-listener
       interceptors:
@@ -39,7 +39,7 @@ spec:
             - name: "filter"
               value: "body.action in ['opened', 'synchronize', 'reopened']"
       bindings:
-        - ref: {{ include "build-pipeline.fullname" . }}-pr
+        - ref: {{ .Chart.Name }}-pr
       template:
-        ref: {{ include "build-pipeline.fullname" . }}-pr
+        ref: {{ .Chart.Name }}-pr
 

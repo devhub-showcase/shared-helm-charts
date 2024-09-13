@@ -2,7 +2,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
-  name: {{ include "build-pipeline.fullname" . }}-pr
+  name: {{ .Chart.Name }}-pr
   labels:
     type: pipeline
     {{- include "build-pipeline.labels" . | nindent 4 }}

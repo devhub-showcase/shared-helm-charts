@@ -4,7 +4,7 @@
 apiVersion: redhatcop.redhat.io/v1alpha1
 kind: GitWebhook
 metadata:
-  name: gitwebhook-{{ include "build-pipeline.fullname" . }}
+  name: gitwebhook-{{ .Chart.Name }}
 spec:
   gitHub:
     gitServerCredentials:
@@ -12,7 +12,7 @@ spec:
   repositoryOwner: {{ $repo._3 }}
   ownerType: user
   repositoryName: {{ $repo._4 | replace ".git" "" }}
-  webhookURL: https://{{ include "build-pipeline.fullname" . }}-{{.Release.Name}}.apps.dev-acm.v3socp.boo
+  webhookURL: https://{{ .Chart.Name }}-{{.Release.Name}}.apps.dev-acm.v3socp.boo
   webhookSecret:
     name: webhook-secret
   events:

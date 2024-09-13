@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
-  name: {{ include "build-pipeline.fullname" . }}-pr
+  name: {{ .Chart.Name }}-pr
 spec:
   params:
     - name: git-repo-url
