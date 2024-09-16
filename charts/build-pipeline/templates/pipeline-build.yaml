@@ -153,10 +153,6 @@ spec:
       runAfter:
         - update-tag
       params:
-        - name: GIT_USER_EMAIL
-          value: 
-        - name: GIT_USER_NAME
-          value: 
         - name: GIT_SCRIPT
           value: |
             git config --global --add safe.directory /workspace/source
