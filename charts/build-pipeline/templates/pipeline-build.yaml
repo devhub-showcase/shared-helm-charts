@@ -65,7 +65,7 @@ spec:
     - name: build-and-push-image
       taskRef:
         kind: ClusterTask
-        name: buildah
+        name: buildah-update
       runAfter:
         - package
       params:
