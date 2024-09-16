@@ -184,4 +184,4 @@ spec:
         - name: TITLE
           value: "Update image tag and SHA hash for $(params.app-name)"
         - name: BODY
-          value: "Updating the image tag and SHA hash after having built the latest $(params.app-env) changes of the $(params.app-name) application."
+          value: "Updating the image tag and SHA hash after having built the latest changes of the $(params.app-name) application."
