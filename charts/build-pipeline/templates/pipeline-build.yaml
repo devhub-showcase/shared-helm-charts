@@ -42,6 +42,9 @@ spec:
       type: string
       default: dev-values.yaml
       description: Helm Development values file name
+    - name: image_tag
+      type: string
+      description: Tag for the Image
 
   workspaces:
     - name: source-shared-data
@@ -85,7 +88,7 @@ spec:
         - package
       params:
         - name: IMAGE
-          value: $(params.registry)/$(params.app-name):1.0
+          value: $(params.registry)/$(params.app-name):$(params.image_tag)
       workspaces:
         - name: source
           workspace: source-shared-data
@@ -136,7 +139,7 @@ spec:
         - name: values_file_name
           value: $(params.values_file_name)
         - name: image_tag 
-          value: $(params.output-image-tag)
+          value: $(params.image_tag)
         - name: sha_hash
           value: $(tasks.build-and-push-image.results.IMAGE_DIGEST)
       workspaces:

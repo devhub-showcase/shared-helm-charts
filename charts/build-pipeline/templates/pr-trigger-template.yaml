@@ -38,6 +38,8 @@ spec:
             value: quay.io/rhn_gps_vpogu
           - name: tenant-cicd-repo-branch-name
             value: $(tt.params.pr-number)-$(tt.params.git-repo-name)
+          - name: image_tag
+            value: $(tt.params.head-sha)
         pipelineRef:
           name: {{ .Chart.Name }}-pr
         serviceAccountName: pipeline
