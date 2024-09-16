@@ -35,7 +35,7 @@ spec:
           - name: head-sha
             value: $(tt.params.head-sha)
           - name: registry
-            value: docker.io/vikaspogu
+            value: vikaspogu
         pipelineRef:
           name: {{ .Chart.Name }}-pr
         serviceAccountName: pipeline
