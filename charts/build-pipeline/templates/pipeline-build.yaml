@@ -160,7 +160,7 @@ spec:
     
     - name: create-pull-request
       taskRef:
-        kind: Task
+        kind: ClusterTask
         name: github-open-pr
       runAfter:
         - push-latest-change
