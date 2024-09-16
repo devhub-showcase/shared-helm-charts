@@ -35,7 +35,7 @@ spec:
           - name: head-sha
             value: $(tt.params.head-sha)
           - name: registry
-            value: vikaspogu
+            value: quay.io/rhn_gps_vpogu
         pipelineRef:
           name: {{ .Chart.Name }}-pr
         serviceAccountName: pipeline
@@ -50,4 +50,4 @@ spec:
               claimName: output-shared-data
           - name: docker-config
             secret:
-              secretName: docker-registry-config
+              secretName: test-quay-secret
