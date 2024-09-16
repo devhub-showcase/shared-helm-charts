@@ -22,7 +22,6 @@ spec:
       kind: PipelineRun
       metadata:
         generateName: {{ .Chart.Name }}-
-        namespace: {{ .Values.pipelineBuild.namespace }}
         labels:
           backstage.io/kubernetes-id: $(tt.params.git-repo-name)
       spec:
