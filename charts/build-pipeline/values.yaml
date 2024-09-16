@@ -1,7 +1,11 @@
-build:
+pipelineBuild:
   namespace: ""
 
-git:
+applicationGitRepo:
   webhookEnabled: false
   branch: main
-  repo: https://github.com/idp-team/my-quarkus-app.git 
+  url: https://github.com/idp-team/my-quarkus-app.git 
+
+tenantCICDRepo:
+  branch: main  
+  url: https://github.com/devhub-showcase/tenants-cicd.git

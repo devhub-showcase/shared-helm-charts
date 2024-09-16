@@ -36,6 +36,8 @@ spec:
             value: $(tt.params.head-sha)
           - name: registry
             value: quay.io/rhn_gps_vpogu
+          - name: tenant-cicd-repo-branch-name
+            value: $(tt.params.pr-number)-$(tt.params.git-repo-name)
         pipelineRef:
           name: {{ .Chart.Name }}-pr
         serviceAccountName: pipeline
@@ -50,4 +52,7 @@ spec:
               claimName: output-shared-data
           - name: docker-config
             secret:
-              secretName: quay-registry-config
+              secretName: pipeline-build-secret
+          - name: git-config
+            secret:
+              secretName: pipeline-build-secret

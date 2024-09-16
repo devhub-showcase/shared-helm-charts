@@ -17,7 +17,7 @@ spec:
     - name: namespace
       type: string
       description: where the tekton project is installed
-      default: {{ .Values.build.namespace }}
+      default: {{ .Values.pipelineBuild.namespace }}
     - name: app-name
       type: string
       description: name of the application
@@ -27,12 +27,23 @@ spec:
     - name: registry
       type: string
       description: Image registry information
+    - name: tenant-cicd-repo
+      type: string
+      description: source repo that contains CI/CD helm values
+      default: {{.Values.tenantCICDRepo.url}}
+    - name: tenant-cicd-repo-branch-name
+      type: string
+      description: source repo that contains CI/CD helm values
+    - name: tenant-cicd-repo-base-branch
+      type: string
+      default: {{.Values.tenantCICDRepo.branch}}
+      description: source repo that contains CI/CD helm values
 
   workspaces:
     - name: source-shared-data
     - name: maven-settings
     - name: docker-config
-    - name: output-shared-data
+    - name: git-config
 
   tasks:
     - name: git-clone-source    # fetch the app's repository
@@ -76,3 +87,97 @@ spec:
           workspace: source-shared-data
         - name: dockerconfig 
           workspace: docker-config
+
+    - name: git-clone-tenant-cicd-repo      # fetch the tenant CI/CD repository
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      runAfter:
+        - build-and-push-image
+      params:
+        - name: url
+          value: $(params.tenant-cicd-repo)
+      workspaces:
+        - name: output
+          workspace: source-shared-data
+
+    - name: create-new-branch     # create a new branch in the tenant gitops repository
+      taskRef:
+        kind: ClusterTask
+        name: git-cli
+      runAfter:
+        - git-clone-tenant-cicd-repo
+      params:
+        - name: GIT_SCRIPT
+          value: |
+            git config --global --add safe.directory /workspace/source
+            git remote set-url origin $(params.tenant-cicd-repo)
+            git checkout -b $(params.tenant-cicd-repo-branch-name)
+            git push --set-upstream origin $(params.tenant-cicd-repo-branch-name)
+      workspaces:
+        - name: source
+          workspace: source-shared-data
+        - name: basic-auth
+          workspace: git-config
+    
+    - name: update-tag
+      taskRef:
+        kind: Task
+        name: edit-file
+      runAfter:
+        - create-new-branch
+      params:
+        - name: app_name
+          value: $(params.app-name)
+        - name: app_env
+          value: $(params.app-env)
+        - name: image_tag 
+          value: $(params.output-image-tag)
+        - name: sha_hash
+          value: $(tasks.build-and-push-image.results.IMAGE_DIGEST)
+      workspaces:
+        - name: output
+          workspace: source-shared-data
+
+    - name: push-latest-change
+      taskRef:
+        kind: ClusterTask
+        name: git-cli
+      runAfter:
+        - update-tag
+      params:
+        - name: GIT_USER_EMAIL
+          value: 
+        - name: GIT_USER_NAME
+          value: 
+        - name: GIT_SCRIPT
+          value: |
+            git config --global --add safe.directory /workspace/source
+            git add $(params.app-name)/$(params.app-env).yaml
+            git commit -m "Update image tag in $(params.app-env)"
+            git push
+      workspaces:
+        - name: source
+          workspace: source-shared-data
+        - name: basic-auth
+          workspace: git-config
+    
+    - name: create-pull-request
+      taskRef:
+        kind: Task
+        name: github-open-pr
+      runAfter:
+        - push-latest-change
+      params:
+        - name: GITHUB_TOKEN_SECRET_NAME
+          value: pipeline-build-secret
+        - name: REPO_FULL_NAME
+          value: $(params.tenant-cicd-repo)
+        - name: HEAD
+          value: $(params.tenant-cicd-repo-branch-name)
+        - name: BASE
+          value: $(params.tenant-cicd-repo-base-branch)
+        - name: TITLE
+          value: "Update image tag and SHA hash for $(params.app-name)"
+        - name: BODY
+          value: "Updating the image tag and SHA hash after having built the latest $(params.app-env) changes of the $(params.app-name) application."
