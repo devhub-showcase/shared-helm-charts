@@ -14,16 +14,9 @@ spec:
     - name: source-branch
       type: string
       description: branch to build from in the source repo
-    - name: namespace
-      type: string
-      description: where the tekton project is installed
-      default: {{ .Values.pipelineBuild.namespace }}
     - name: app-name
       type: string
       description: name of the application
-    - name: head-sha
-      type: string
-      description: head sha of the branch
     - name: registry
       type: string
       description: Image registry information

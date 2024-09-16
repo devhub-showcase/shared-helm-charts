@@ -22,7 +22,6 @@ spec:
       kind: PipelineRun
       metadata:
         generateName: {{ .Chart.Name }}-
-        namespace: {{ .Values.pipelineBuild.namespace }}
         labels:
           backstage.io/kubernetes-id: $(tt.params.git-repo-name)
       spec:
@@ -33,8 +32,6 @@ spec:
             value: $(tt.params.git-revision)
           - name: app-name
             value: $(tt.params.git-repo-name)
-          - name: head-sha
-            value: $(tt.params.head-sha)
           - name: registry
             value: quay.io/rhn_gps_vpogu
           - name: tenant-cicd-repo-branch-name
