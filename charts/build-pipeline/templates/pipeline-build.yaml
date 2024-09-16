@@ -70,7 +70,7 @@ spec:
         - package
       params:
         - name: IMAGE
-          value: $(params.registry)/$(params.app-name):$(params.head-sha)
+          value: $(params.registry)/$(params.app-name):1.0
       workspaces:
         - name: source
           workspace: source-shared-data
