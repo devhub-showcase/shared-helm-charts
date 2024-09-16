@@ -38,6 +38,10 @@ spec:
       type: string
       default: {{.Values.tenantCICDRepo.branch}}
       description: source repo that contains CI/CD helm values
+    - name: values_file_name
+      type: string
+      default: dev-values.yaml
+      description: Helm Development values file name
 
   workspaces:
     - name: source-shared-data
@@ -129,8 +133,8 @@ spec:
       params:
         - name: app_name
           value: $(params.app-name)
-        - name: app_env
-          value: $(params.app-env)
+        - name: values_file_name
+          value: $(params.values_file_name)
         - name: image_tag 
           value: $(params.output-image-tag)
         - name: sha_hash
@@ -153,8 +157,8 @@ spec:
         - name: GIT_SCRIPT
           value: |
             git config --global --add safe.directory /workspace/source
-            git add $(params.app-name)/$(params.app-env).yaml
-            git commit -m "Update image tag in $(params.app-env)"
+            git add $(params.app-name)/$(params.values_file_name).yaml
+            git commit -m "Update image tag in $(params.values_file_name)"
             git push
       workspaces:
         - name: source
