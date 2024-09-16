@@ -65,18 +65,12 @@ spec:
     - name: build-and-push-image
       taskRef:
         kind: ClusterTask
-        name: buildah-1-15-0
+        name: kaniko
       runAfter:
         - package
       params:
         - name: IMAGE
           value: $(params.registry)/$(params.app-name):1.0
-        - name: FORMAT
-          value: docker
-        - name: TLSVERIFY
-          value: "false"
-        - name: STORAGE_DRIVER
-          value: overlay
       workspaces:
         - name: source
           workspace: source-shared-data
