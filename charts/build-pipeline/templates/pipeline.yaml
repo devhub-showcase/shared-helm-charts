@@ -104,7 +104,7 @@ spec:
             git checkout -b $(params.tenant-cicd-repo-branch-name)
             sed -i "s|^  tag:.*|  tag: $(params.image-tag)|" $(params.helm-deploy-values)
             cat $(params.helm-deploy-values)
-            git add $(params.helm-deploy-values).yaml
+            git add $(params.helm-deploy-values)
             git commit -m "Update image tag in $(params.helm-deploy-values)"
             git push --set-upstream origin $(params.tenant-cicd-repo-branch-name) --force
       workspaces:
