@@ -1,4 +1,4 @@
-___
+---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
@@ -8,72 +8,72 @@ metadata:
     {{- include "build-pipeline.labels" . | nindent 4 }}
 spec:
   params:
-    - name: source_repo
+    - name: source-repo
       type: string
       description: source repo that contains the application code
-    - name: source_branch
+    - name: source-branch
       type: string
       description: branch to build from in the source repo
-    - name: app_name
+    - name: app-name
       type: string
       description: name of the application
     - name: registry
       type: string
       description: Image registry information
-    - name: tenant_cicd_repo
+    - name: tenant-cicd-repo
       type: string
       description: source repo that contains CI/CD helm values
       default: {{.Values.tenantCICDRepo.url}}
-    - name: tenant_cicd_repo_branch_name
+    - name: tenant-cicd-repo-branch-name
       type: string
       description: source repo that contains CI/CD helm values
-    - name: tenant_cicd_repo_base_branch
+    - name: tenant-cicd-repo-base-branch
       type: string
       default: {{.Values.tenantCICDRepo.branch}}
       description: source repo that contains CI/CD helm values
-    - name: helm_deploy_values
+    - name: helm-deploy-values
       type: string
-      default: {{.Values.applicationRepo.clusterDeployment}}/{{.Values.applicationRepo.teamName}}/dev_values.yaml
+      default: {{.Values.applicationRepo.clusterDeployment}}/{{.Values.applicationRepo.teamName}}/dev-values.yaml
       description: Helm Development values file name
-    - name: image_tag
+    - name: image-tag
       type: string
       description: Tag for the Image
 
   workspaces:
-    - name: source_shared_data
-    - name: maven_settings
-    - name: docker_config
-    - name: git_config
+    - name: source-shared-data
+    - name: maven-settings
+    - name: docker-config
+    - name: git-config
 
   tasks:
-    - name: git_clone_source    # fetch the app's repository
+    - name: git-clone-source    # fetch the app's repository
       taskRef:
         kind: ClusterTask
-        name: git_clone
+        name: git-clone
       params:
         - name: url
-          value: $(params.source_repo)
+          value: $(params.source-repo)
         - name: revision
-          value: $(params.source_branch)
+          value: $(params.source-branch)
       workspaces:
         - name: output
-          workspace: source_shared_data
+          workspace: source-shared-data
     - name: package             # run unit tests and compile the app's source code
       taskRef:
         kind: ClusterTask
         name: maven
       runAfter:
-        - git_clone_source
+        - git-clone-source
       params:
         - name: GOALS  
           value:    
             - package   
       workspaces:
         - name: source
-          workspace: source_shared_data
-        - name: maven_settings
-          workspace: maven_settings
-    - name: build_and_push_image
+          workspace: source-shared-data
+        - name: maven-settings
+          workspace: maven-settings
+    - name: build-and-push-image
       taskRef:
         kind: ClusterTask
         name: kaniko
@@ -81,99 +81,99 @@ spec:
         - package
       params:
         - name: IMAGE
-          value: $(params.registry)/$(params.app_name):$(params.image_tag)
+          value: $(params.registry)/$(params.app-name):$(params.image-tag)
       workspaces:
         - name: source
-          workspace: source_shared_data
+          workspace: source-shared-data
         - name: dockerconfig 
-          workspace: docker_config
+          workspace: docker-config
 
-    - name: git_clone_tenant_cicd_repo
+    - name: git-clone-tenant-cicd-repo
       taskRef:
         kind: ClusterTask
-        name: git_clone
+        name: git-clone
       runAfter:
-        - build_and_push_image
+        - build-and-push-image
       params:
         - name: url
-          value: $(params.tenant_cicd_repo)
+          value: $(params.tenant-cicd-repo)
       workspaces:
         - name: output
-          workspace: source_shared_data
+          workspace: source-shared-data
 
-    - name: create_new_branch
+    - name: create-new-branch
       taskRef:
         kind: ClusterTask
-        name: git_cli
+        name: git-cli
       runAfter:
-        - git_clone_tenant_cicd_repo
+        - git-clone-tenant-cicd-repo
       params:
         - name: GIT_SCRIPT
           value: |
-            git config __global __add safe.directory /workspace/source
-            git remote set_url origin $(params.tenant_cicd_repo)
-            git checkout _b $(params.tenant_cicd_repo_branch_name)
-            git push __set_upstream origin $(params.tenant_cicd_repo_branch_name)
+            git config --global --add safe.directory /workspace/source
+            git remote set-url origin $(params.tenant-cicd-repo)
+            git checkout -b $(params.tenant-cicd-repo-branch-name)
+            git push --set-upstream origin $(params.tenant-cicd-repo-branch-name)
       workspaces:
         - name: source
-          workspace: source_shared_data
-        - name: basic_auth
-          workspace: git_config
+          workspace: source-shared-data
+        - name: basic-auth
+          workspace: git-config
     
-    - name: update_tag
+    - name: update-tag
       taskRef:
         kind: ClusterTask
-        name: edit_file
+        name: edit-file
       runAfter:
-        - create_new_branch
+        - create-new-branch
       params:
-        - name: tenant_repo_name
-          value: $(params.tenant_repo_name)
-        - name: helm_deploy_values
-          value: $(params.helm_deploy_values)
-        - name: image_tag 
-          value: $(params.image_tag)
-        - name: sha_hash
-          value: $(tasks.build_and_push_image.results.IMAGE_DIGEST)
+        - name: tenant-repo-name
+          value: $(params.tenant-repo-name)
+        - name: helm-deploy-values
+          value: $(params.helm-deploy-values)
+        - name: image-tag 
+          value: $(params.image-tag)
+        - name: sha-hash
+          value: $(tasks.build-and-push-image.results.IMAGE_DIGEST)
       workspaces:
         - name: output
-          workspace: source_shared_data
+          workspace: source-shared-data
 
-    - name: push_latest_change
+    - name: push-latest-change
       taskRef:
         kind: ClusterTask
-        name: git_cli
+        name: git-cli
       runAfter:
-        - update_tag
+        - update-tag
       params:
         - name: GIT_SCRIPT
           value: |
-            git config __global __add safe.directory /workspace/source
-            git add $(params.helm_deploy_values).yaml
-            git commit _m "Update image tag in $(params.helm_deploy_values)"
+            git config --global --add safe.directory /workspace/source
+            git add $(params.helm-deploy-values).yaml
+            git commit -m "Update image tag in $(params.helm-deploy-values)"
             git push
       workspaces:
         - name: source
-          workspace: source_shared_data
-        - name: basic_auth
-          workspace: git_config
+          workspace: source-shared-data
+        - name: basic-auth
+          workspace: git-config
     
-    - name: create_pull_request
+    - name: create-pull-request
       taskRef:
         kind: ClusterTask
-        name: github_open_pr
+        name: github-open-pr
       runAfter:
-        - push_latest_change
+        - push-latest-change
       params:
         - name: GITHUB_TOKEN_SECRET_NAME
-          value: pipeline_build_secret
+          value: pipeline-build-secret
         - name: REPO_FULL_NAME
-          value: $(params.tenant_cicd_repo)
+          value: $(params.tenant-cicd-repo)
         - name: HEAD
-          value: $(params.tenant_cicd_repo_branch_name)
+          value: $(params.tenant-cicd-repo-branch-name)
         - name: BASE
-          value: $(params.tenant_cicd_repo_base_branch)
+          value: $(params.tenant-cicd-repo-base-branch)
         - name: TITLE
-          value: "Update image tag and SHA hash for $(params.app_name)"
+          value: "Update image tag and SHA hash for $(params.app-name)"
         - name: BODY
-          value: "Updating the image tag and SHA hash after having built the latest changes of the $(params.app_name) application."
+          value: "Updating the image tag and SHA hash after having built the latest changes of the $(params.app-name) application."
