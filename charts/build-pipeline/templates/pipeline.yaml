@@ -102,7 +102,7 @@ spec:
             cd {{( splitList "/" .Values.tenantCICDRepo.url | last | replace ".git" "")}}
             git remote set-url origin $(params.tenant-cicd-repo)
             git checkout -b $(params.tenant-cicd-repo-branch-name)
-            sed -ie 's|^  tag:.*|  tag: "$(params.image-tag)"|' $(params.helm-deploy-values)
+            sed -i 's|^  tag:.*|  tag: "$(params.image-tag)"|' $(params.helm-deploy-values)
             cat $(params.helm-deploy-values)
             git add $(params.helm-deploy-values).yaml
             git commit -m "Update image tag in $(params.helm-deploy-values)"
