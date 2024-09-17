@@ -5,7 +5,7 @@ metadata:
   name: {{ .Chart.Name }}_pr
   labels:
     type: pipeline
-    {{- include "build_pipeline.labels" . | nindent 4 }}
+    {{- include "build-pipeline.labels" . | nindent 4 }}
 spec:
   params:
     - name: source_repo

@@ -3,6 +3,9 @@ apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
   name: {{ .Chart.Name }}-pr
+  labels:
+    type: pipeline
+    {{- include "build-pipeline.labels" . | nindent 4 }}
 spec:
   params:
     - name: git-repo-url

@@ -5,6 +5,9 @@ apiVersion: redhatcop.redhat.io/v1alpha1
 kind: GitWebhook
 metadata:
   name: gitwebhook-{{ .Chart.Name }}
+  labels:
+    type: pipeline
+    {{- include "build-pipeline.labels" . | nindent 4 }}
 spec:
   gitHub:
     gitServerCredentials:
