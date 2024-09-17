@@ -2,7 +2,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
-  name: {{ .Chart.Name }}-pr
+  name: {{ .Chart.Name }}
   labels:
     type: pipeline
     {{- include "build-pipeline.labels" . | nindent 4 }}

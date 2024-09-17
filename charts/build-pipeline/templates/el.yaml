@@ -39,7 +39,7 @@ spec:
             - name: "filter"
               value: "body.action in ['opened', 'synchronize', 'reopened']"
       bindings:
-        - ref: {{ .Chart.Name }}-pr
+        - ref: {{ .Chart.Name }}
       template:
-        ref: {{ .Chart.Name }}-pr
+        ref: {{ .Chart.Name }}
 
