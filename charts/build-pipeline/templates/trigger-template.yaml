@@ -42,7 +42,7 @@ spec:
           - name: image-tag
             value: $(tt.params.head-sha)
           - name: helm-deploy-values
-            value: {{.Values.applicationRepo.clusterDeployment}}/{{.Values.applicationRepo.teamName}}/$(tt.params.git-repo-name)/dev-values.yaml
+            value: {{.Values.applicationRepo.clusterDeployment}}/{{.Values.applicationRepo.teamName}}/$(tt.params.git-repo-name)/deploy/dev-values.yaml
         pipelineRef:
           name: {{ .Chart.Name }}
         serviceAccountName: pipeline
