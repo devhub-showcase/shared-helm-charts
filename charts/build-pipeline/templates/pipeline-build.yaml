@@ -122,7 +122,7 @@ spec:
     
     - name: update-tag
       taskRef:
-        kind: Task
+        kind: ClusterTask
         name: edit-file
       runAfter:
         - create-new-branch
