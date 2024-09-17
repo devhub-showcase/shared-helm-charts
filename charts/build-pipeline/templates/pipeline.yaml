@@ -101,7 +101,7 @@ spec:
         - name: output
           workspace: source-shared-data
 
-    - name: create-new-branch
+    - name: update-tag-and-push
       taskRef:
         kind: ClusterTask
         name: git-cli
@@ -111,46 +111,14 @@ spec:
         - name: GIT_SCRIPT
           value: |
             git config --global --add safe.directory /workspace/source
-            git pull
             git remote set-url origin $(params.tenant-cicd-repo)
             git checkout -b $(params.tenant-cicd-repo-branch-name)
-            git push --set-upstream origin $(params.tenant-cicd-repo-branch-name)
-      workspaces:
-        - name: source
-          workspace: source-shared-data
-        - name: basic-auth
-          workspace: git-config
-    
-    - name: update-tag
-      taskRef:
-        kind: ClusterTask
-        name: edit-file
-      runAfter:
-        - create-new-branch
-      params:
-        - name: helm-deploy-values
-          value: $(params.helm-deploy-values)
-        - name: image-tag 
-          value: $(params.image-tag)
-        - name: sha-hash
-          value: $(tasks.build-and-push-image.results.IMAGE_DIGEST)
-      workspaces:
-        - name: output
-          workspace: source-shared-data
-
-    - name: push-latest-change
-      taskRef:
-        kind: ClusterTask
-        name: git-cli
-      runAfter:
-        - update-tag
-      params:
-        - name: GIT_SCRIPT
-          value: |
-            git config --global --add safe.directory /workspace/source
+            sed -ie 's|^  sha-hash:.*|  sha-hash: "$(tasks.build-and-push-image.results.IMAGE_DIGEST)"|' $(params.helm-deploy-values)
+            sed -ie 's|^  tag:.*|  tag: "$(params.image-tag)"|' $(params.helm-deploy-values)
+            cat $(params.helm-deploy-values)
             git add $(params.helm-deploy-values).yaml
             git commit -m "Update image tag in $(params.helm-deploy-values)"
-            git push
+            git push --set-upstream origin $(params.tenant-cicd-repo-branch-name) --force
       workspaces:
         - name: source
           workspace: source-shared-data
@@ -162,7 +130,7 @@ spec:
         kind: ClusterTask
         name: github-open-pr
       runAfter:
-        - push-latest-change
+        - update-tag-and-push
       params:
         - name: GITHUB_TOKEN_SECRET_NAME
           value: pipeline-build-secret
