@@ -1,5 +1,5 @@
-{{- if .Values.applicationGitRepo.webhookEnabled }}
-{{ $repo := split "/" .Values.applicationGitRepo.url }}
+{{- if .Values.applicationRepo.webhookEnabled }}
+{{ $repo := split "/" .Values.applicationRepo.url }}
 ---
 apiVersion: redhatcop.redhat.io/v1alpha1
 kind: GitWebhook

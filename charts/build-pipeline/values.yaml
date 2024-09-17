@@ -1,10 +1,9 @@
-pipelineBuild:
-  namespace: ""
-
-applicationGitRepo:
+applicationRepo:
   webhookEnabled: false
   branch: main
-  url: https://github.com/idp-team/my-quarkus-app.git 
+  url: https://github.com/idp-team/my-quarkus-app.git
+  clusterDeployment: dev-acm
+  teamName: team-a
 
 tenantCICDRepo:
   branch: main  
