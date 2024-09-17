@@ -111,6 +111,7 @@ spec:
         - name: GIT_SCRIPT
           value: |
             git config --global --add safe.directory /workspace/source
+            git pull
             git remote set-url origin $(params.tenant-cicd-repo)
             git checkout -b $(params.tenant-cicd-repo-branch-name)
             git push --set-upstream origin $(params.tenant-cicd-repo-branch-name)
