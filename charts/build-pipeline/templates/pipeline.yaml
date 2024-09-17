@@ -95,6 +95,10 @@ spec:
       runAfter:
         - build-and-push-image
       params:
+        - name: GIT_USER_EMAIL
+          value: "tekton@example.com"
+        - name: GIT_USER_NAME
+          value: tekton-pipeline
         - name: GIT_SCRIPT
           value: |
             git config --global --add safe.directory /workspace/source
