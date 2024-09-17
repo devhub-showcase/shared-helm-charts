@@ -127,7 +127,7 @@ spec:
         - name: GITHUB_TOKEN_SECRET_NAME
           value: pipeline-build-secret
         - name: REPO_FULL_NAME
-          value: $(params.tenant-cicd-repo)
+          value: {{(.Values.tenantCICDRepo.url | replace "https://github.com/" "")}}
         - name: HEAD
           value: $(params.tenant-cicd-repo-branch-name)
         - name: BASE
