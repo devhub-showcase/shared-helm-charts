@@ -24,7 +24,7 @@ spec:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
-        generateName: {{ .Chart.Name }}-
+        generateName: $(tt.params.git-repo-name)-
         labels:
           backstage.io/kubernetes-id: $(tt.params.git-repo-name)
       spec:
