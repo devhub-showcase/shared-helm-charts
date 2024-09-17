@@ -127,8 +127,6 @@ spec:
       runAfter:
         - create-new-branch
       params:
-        - name: tenant-repo-name
-          value: $(params.tenant-repo-name)
         - name: helm-deploy-values
           value: $(params.helm-deploy-values)
         - name: image-tag 
