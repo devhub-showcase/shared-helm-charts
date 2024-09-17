@@ -33,7 +33,6 @@ spec:
       description: source repo that contains CI/CD helm values
     - name: helm-deploy-values
       type: string
-      default: {{.Values.applicationRepo.clusterDeployment}}/{{.Values.applicationRepo.teamName}}/dev-values.yaml
       description: Helm Development values file name
     - name: image-tag
       type: string
@@ -113,7 +112,6 @@ spec:
             git config --global --add safe.directory /workspace/source
             git remote set-url origin $(params.tenant-cicd-repo)
             git checkout -b $(params.tenant-cicd-repo-branch-name)
-            sed -ie 's|^  sha-hash:.*|  sha-hash: "$(tasks.build-and-push-image.results.IMAGE_DIGEST)"|' $(params.helm-deploy-values)
             sed -ie 's|^  tag:.*|  tag: "$(params.image-tag)"|' $(params.helm-deploy-values)
             cat $(params.helm-deploy-values)
             git add $(params.helm-deploy-values).yaml
