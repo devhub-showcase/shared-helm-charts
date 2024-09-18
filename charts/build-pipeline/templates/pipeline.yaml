@@ -91,7 +91,7 @@ spec:
         - name: GOALS
           value:
             - 'sonar:sonar'
-            - '-Dsonar.projectKey=ci-pipeline-ref-arc'
+            - '-Dsonar.projectKey=ci-pipeline-ref-$(params.app-name)'
             - '-Dsonar.host.url=$(SONAR_URL)'
             - '-Dsonar.login=$(SONAR_AUTH_TOKEN)'
             - '-Dsonar.exclusions=**/*.java'
