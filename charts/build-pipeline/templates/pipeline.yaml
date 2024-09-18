@@ -93,7 +93,7 @@ spec:
             - 'sonar:sonar'
             - '-Dsonar.projectKey=ci-pipeline-ref-$(params.app-name)'
             - '-Dsonar.host.url=$(SONAR_URL)'
-            - '-Dsonar.login=$(SONAR_AUTH_TOKEN)'
+            - '-Dsonar.token=$(SONAR_AUTH_TOKEN)'
             - '-Dsonar.exclusions=**/*.java'
             - '-s  $(workspaces.maven-settings.path)/settings.xml'
       workspaces:
