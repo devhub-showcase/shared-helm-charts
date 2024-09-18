@@ -43,7 +43,7 @@ spec:
             value: $(tt.params.head-sha)
           - name: helm-deploy-values
             value: {{.Values.applicationRepo.clusterDeployment}}/{{.Values.applicationRepo.teamName}}/$(tt.params.git-repo-name)/deploy/dev-values.yaml
-          - name: SONAR-SECRET-NAME
+          - name: SONAR_SECRET_NAME
             value: pipeline-build-secret
         pipelineRef:
           name: {{ .Chart.Name }}

@@ -37,7 +37,7 @@ spec:
     - name: image-tag
       type: string
       description: Tag for the Image
-    - name: SONAR-SECRET-NAME
+    - name: SONAR_SECRET_NAME
       type: string
       description: sonarqube auth token and url secret
 
@@ -84,6 +84,8 @@ spec:
         kind: ClusterTask
         name: maven-custom
       params:
+        - name: SONAR_SECRET_NAME
+          value: $(params.SONAR_SECRET_NAME)
         - name: GOALS
           value:
             - 'sonar:sonar'
