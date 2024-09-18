@@ -37,6 +37,9 @@ spec:
     - name: image-tag
       type: string
       description: Tag for the Image
+    - name: SONAR_SECRET_NAME
+      type: string
+      description: sonarqube auth token and url secret
 
   workspaces:
     - name: source-shared-data
@@ -57,10 +60,11 @@ spec:
       workspaces:
         - name: output
           workspace: source-shared-data
-    - name: package             # run unit tests and compile the app's source code
+
+    - name: package
       taskRef:
         kind: ClusterTask
-        name: maven
+        name: maven-custom
       runAfter:
         - git-clone-source
       params:
@@ -73,12 +77,34 @@ spec:
         - name: maven-settings
           workspace: maven-settings
 
+    - name: static-code-analysis
+      runAfter:
+        - package
+      taskRef:
+        kind: ClusterTask
+        name: maven-custom
+      params:
+        - name: GOALS
+          value:
+            - 'sonar:sonar'
+            - '-Dsonar.projectKey=ci-pipeline-ref-arc'
+            - '-Dsonar.host.url=$(SONAR_URL)'
+            - '-Dsonar.login=$(SONAR_AUTH_TOKEN)'
+            - '-Dsonar.exclusions=**/*.java'
+            - '-s  $(workspaces.maven-settings.path)/settings.xml'
+      workspaces:
+        - name: source
+          workspace: source-shared-data
+        - name: maven-settings
+          workspace: maven-settings
+
     - name: build-and-push-image
+      retries: 5
       taskRef:
         kind: ClusterTask
         name: kaniko
       runAfter:
-        - package
+        - static-code-analysis
       params:
         - name: IMAGE
           value: $(params.registry)/$(params.app-name):$(params.image-tag)
