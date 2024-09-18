@@ -68,6 +68,8 @@ spec:
       runAfter:
         - git-clone-source
       params:
+        - name: SONAR_SECRET_NAME
+          value: $(params.SONAR_SECRET_NAME)
         - name: GOALS  
           value:    
             - package   
