@@ -188,11 +188,13 @@ spec:
           value: "Update image tag and SHA hash for $(params.app-name)"
         - name: BODY
           value: "Updating the image tag and SHA hash after having built the latest changes of the $(params.app-name) application."
-  finally:
+
     - name: set-status-success
       taskRef:
         kind: ClusterTask
         name: github-set-status
+      runAfter:
+        - create-pull-request
       params:
         - name: REPO_FULL_NAME
           value: {{(.Values.applicationRepo.url | replace "https://github.com/" "" | replace ".git" "")}}
