@@ -119,6 +119,7 @@ spec:
           workspace: docker-config
 
     - name: update-tag-and-push
+      retries: 5
       taskRef:
         kind: ClusterTask
         name: git-cli
@@ -148,6 +149,7 @@ spec:
           workspace: source-shared-data
     
     - name: create-pull-request
+      retries: 5
       taskRef:
         kind: ClusterTask
         name: github-open-pr
