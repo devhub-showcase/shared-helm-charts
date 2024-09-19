@@ -65,11 +65,13 @@ spec:
           value: "pending"
         - name: TARGET_URL
           value: "https://console-openshift-console.apps.dev-acm.v3socp.boo/k8s/ns/{{.Release.Namespace}}/tekton.dev~v1beta1~PipelineRun/$(context.pipelineRun.name)"
-
+        
     - name: git-clone-source    # fetch the app's repository
       taskRef:
         kind: ClusterTask
         name: git-clone
+      runAfter:
+        - set-status-pending
       params:
         - name: url
           value: $(params.source-repo)
