@@ -190,6 +190,7 @@ spec:
           value: "Updating the image tag and SHA hash after having built the latest changes of the $(params.app-name) application."
   finally:
     - name: set-status
+      retries: 5
       taskRef:
         kind: ClusterTask
         name: github-set-status
