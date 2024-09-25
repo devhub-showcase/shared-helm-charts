@@ -134,7 +134,7 @@ spec:
         - name: IMAGE
           value: $(params.registry)/$(params.app-name):$(params.image-tag)
         - name: TLSVERIFY
-          value: false
+          value: 'false'
       workspaces:
         - name: source
           workspace: source-shared-data
