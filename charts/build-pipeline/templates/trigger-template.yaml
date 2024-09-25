@@ -63,3 +63,10 @@ spec:
           - name: git-config
             secret:
               secretName: pipeline-build-secret
+          - name: sslcertdir
+            configMap:
+              name: openshift-service-ca.crt
+              defaultMode: 420
+              items:
+              - key: service-ca.crt
+                path: ca.crt

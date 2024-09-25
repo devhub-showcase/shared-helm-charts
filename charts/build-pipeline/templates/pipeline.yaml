@@ -46,7 +46,8 @@ spec:
     - name: maven-settings
     - name: docker-config
     - name: git-config
-
+    - name: sslcertdir
+      optional: true
   tasks:
     - name: set-status-pending
       taskRef:
@@ -126,7 +127,7 @@ spec:
       retries: 5
       taskRef:
         kind: ClusterTask
-        name: kaniko
+        name: buildah
       runAfter:
         - static-code-analysis
       params:
@@ -135,8 +136,8 @@ spec:
       workspaces:
         - name: source
           workspace: source-shared-data
-        - name: dockerconfig 
-          workspace: docker-config
+        - name: sslcertdir
+          workspace: sslcertdir
 
     - name: update-tag-and-push
       retries: 5
