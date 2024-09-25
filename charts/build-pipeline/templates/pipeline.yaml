@@ -127,12 +127,14 @@ spec:
       retries: 5
       taskRef:
         kind: ClusterTask
-        name: buildah
+        name: buildah-ssl
       runAfter:
         - static-code-analysis
       params:
         - name: IMAGE
           value: $(params.registry)/$(params.app-name):$(params.image-tag)
+        - name: TLSVERIFY
+          value: false
       workspaces:
         - name: source
           workspace: source-shared-data
