@@ -36,7 +36,7 @@ spec:
           - name: app-name
             value: $(tt.params.git-repo-name)
           - name: registry
-            value: index.docker.io/vikaspogu
+            value: image-registry.openshift-image-registry.svc:5000/{{.Values.applicationRepo.teamName}}-dev
           - name: tenant-cicd-repo-branch-name
             value: $(tt.params.pr-number)-$(tt.params.git-repo-name)
           - name: image-tag
