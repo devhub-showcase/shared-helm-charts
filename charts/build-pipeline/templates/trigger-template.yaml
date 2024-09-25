@@ -36,7 +36,7 @@ spec:
           - name: app-name
             value: $(tt.params.git-repo-name)
           - name: registry
-            value: quay.io/rhn_gps_vpogu
+            value: docker.io/vikaspogu
           - name: tenant-cicd-repo-branch-name
             value: $(tt.params.pr-number)-$(tt.params.git-repo-name)
           - name: image-tag
