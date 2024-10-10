@@ -50,8 +50,13 @@ spec:
         serviceAccountName: pipeline
         workspaces:
           - name: source-shared-data
-            persistentVolumeClaim:
-              claimName: source-shared-data
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 1Gi
           - name: maven-settings 
             emptyDir: {} 
           - name: output-shared-data
